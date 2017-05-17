@@ -7,5 +7,6 @@ The script is started as a service and runs an endless loop, it will periodicall
 
 The main reason for this is to make sure to always have a nice and smooth graph. When low values, ie dark outside, are detected the script will not poll as often as during day time.
 
-# rsync.sh - The backup script on my NAS that will check status and update status on Domoticz.
-# NAS_Process - Describes the process flow of the NAS Backup script
+Files:
+rsync.sh - The backup script on my NAS that will check status and update status on Domoticz.
+NAS_Backup_Process.pdf - Describes the process flow of the NAS Backup script
