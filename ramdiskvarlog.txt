@@ -1,0 +1,62 @@
+# Cred goes to: https://steinar.bang.priv.no/2016/07/03/logging-to-persistent-tmpfs-on-raspbian-jessie/
+
+1. become root or use sudo.
+
+2. Edit /etc/fstab
+tmpfs    /var/log    tmpfs    defaults,noatime,nosuid,mode=0755,size=100m    0 0
+
+3. Create /etc/init.d/ramdiskvarlog file with the following contents:
+
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          ramdiskvarlog
+# Required-Start:    $local_fs $time
+# X-Stop-After:      $time
+# Required-Start:    $local_fs $time
+# Required-Stop:     $local_fs
+# Default-Start:     S
+# Default-Stop:      0 1 6
+# Short-Description: Restore to and save logs from tmpfs filesystem
+# Description:       Restore to and save logs from tmpfs filesystem
+### END INIT INFO
+ 
+# /etc/init.d/ramdiskvarlog
+#
+ 
+case "$1" in
+  start)
+    echo "Copying files to ramdisk"
+    rsync -av /var/backup/log/ /var/log/
+    echo [`date +"%Y-%m-%d %H:%M"`] Ramdisk Synched from HD >> /var/log/ramdisk_sync.log
+    ;;
+  sync)
+    echo "Synching files from ramdisk to Harddisk"
+    echo [`date +"%Y-%m-%d %H:%M"`] Ramdisk Synched to HD >> /var/log/ramdisk_sync.log
+    rsync -avy --delete --recursive --force /var/log/ /var/backup/log/
+    ;;
+  stop)
+    echo "Synching logfiles from ramdisk to Harddisk"
+    echo [`date +"%Y-%m-%d %H:%M"`] Ramdisk Synched to HD >> /var/log/ramdisk_sync.log
+    rsync -av --delete --recursive --force /var/log/ /var/backup/log/
+    ;;
+  *)
+    echo "Usage: /etc/init.d/ramdisk {start|stop|sync}"
+    exit 1
+    ;;
+esac
+ 
+exit 0
+
+4. Make it executable: 
+chmod +x /etc/init.d/ramdiskvarlog
+
+5. Created a directory to store the logs persistently, and populated it initially with the contents of the existing /var/log with the following command line commands : 
+mkdir -p /var/backup/log
+/etc/init.d/ramdiskvarlog sync
+
+6. Made the /etc/init.d/ramdiskvarlog script be run at boot time and during orderly shutdown with the following command line command
+systemctl enable ramdiskvarlog
+
+7. Schedule the script to run daily by edit crontab -e
+2 7 * * * /etc/init.d/ramdiskvarlog sync >> /dev/null 2>&1
+
