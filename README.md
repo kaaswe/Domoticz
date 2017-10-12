@@ -20,6 +20,6 @@ rsync.sh - The backup script on my NAS that will check status and update status 
 NAS_Backup_Process.pdf - Describes the process flow of the NAS Backup script
 
 # 3 Ramdisk Raspberry
-This is a script that I will take no credit for, I just publish it as it's very good. As many might know SD cards tend to break down on RPi's because of excessive writings, and I have tried many different optoins. But this one I think is by far the best.
+This is a script that I will take no credit for, I just publish it as it's very good. As many might know SD cards tend to break down on RPi's because of excessive writings, and I have tried many different options. But this one I think is by far the best.
 
 The script and all instructions are inside the file: ramdiskvarlog.txt
